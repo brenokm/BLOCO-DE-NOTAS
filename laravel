@@ -1,0 +1,403 @@
+UsuariosController
+
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Usuario;
+use App\Models\Usuariosrh;
+use Illuminate\Http\Request;
+
+class UsuariosController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $usuario = \App\Models\Usuariosrh::all();
+        return view('usuarios', ['usuariosrh' => $usuario]);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        return view('form-cadastrar-usuariosrh');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+       
+        // Crie um novo registro na tabela 'usuarios'
+        $usuario = new \App\Models\Usuariosrh;
+    
+        // Preencha o campo 'usuario' com o valor fornecido pelo usuário
+        $usuario->email = $request->email;
+        $usuario->cpf = $request->cpf;
+        $usuario->nome = $request->nome;
+        $usuario->senha = $request->senha;
+        $usuario->dataNascimento = $request->dataNascimento;
+        $usuario->telefone = $request->telefone;
+
+        // Salve o registro criado no banco de dados
+        $usuario->save();
+    
+        // Redirecione para a rota 'usuarios' após a criação bem-sucedida do registro
+        return redirect()->route('usuarios');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Request $request)
+    {
+        $usuario = \App\Models\Usuariosrh::find($request->id);
+        return view('form-usuario', ['usuariosrh'=> $usuario]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Usuariosrh $usuario)
+    {
+        $u = Usuariosrh::find($request->id);
+        $u->email = $request->email;
+        $u->cpf = $request->cpf;
+        $u->nome = $request->nome;
+        $u->senha = $request->senha;
+        $u->dataNascimento = $request->dataNascimento;
+        $u->telefone = $request->telefone;
+
+        $u->save();
+        return Redirect()->route('usuarios');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $cpf)
+    {
+        $u = Usuariosrh::find($cpf);
+        $u->delete();
+        return Redirect()->route('usuarios');
+    }
+}
+
+
+
+
+
+
+
+
+
+
+usuariosrh.php
+
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Usuariosrh extends Model
+{
+    protected $table = 'usuariosrh';
+    protected $fillable =
+    [  
+        'email',
+        'cpf',           
+        'nome',
+        'senha',
+        'dataNascimento',
+        'telefone'
+    ];
+}
+
+
+
+migration
+
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('usuariosrh', function (Blueprint $table) {
+            $table->id();
+            $table->string('email');
+            $table->string('cpf');            
+            $table->string('nome');
+            $table->string('senha');
+            $table->string('dataNascimento');
+            $table->string('telefone');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('usuariosrhs');
+    }
+};
+
+
+seder
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+
+class UsuariosrhSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        //
+    }
+}
+
+
+form cadastrar usuarios rh
+
+@extends('layouts.app')
+
+@section('content')
+    <form class="card" action="{{ route('incluirUser') }}" method="POST">
+        @csrf
+        @method('PUT')
+
+
+        <div class="card-header">
+            <div class="card-title">
+                Cadastro de Usuário
+            </div>
+        </div>
+
+
+        <div class="card-body">
+            <div class="form-group">
+                <label for="id" name="id" id="id" class="label-form">ID</label>
+                <input type="number" name="id" id="id" class="form-control" value= "" readonly />
+            </div>
+            <div class="form-group">
+                <label for="nome" name="nome" id="nome" class="label-form">Nome Completo</label>
+                <input type="text" name="nome" id="nome" class="form-control" value= "" required />
+            </div>
+            <div class="form-group">
+                <label for="cpf" name="cpf" id="cpf" class="label-form">CPF</label>
+                <input type="text" name="cpf" id="cpf" class="form-control" value= "" required />
+            </div>
+            <div class="form-group">
+            <div class="form-group">
+                <label for="dataNascimento" name="dataNascimento" id="dataNascimento" class="label-form">Data de Nascimento</label>
+                <input type="text" name="dataNascimento" id="dataNascimento" class="form-control" value= "" required />
+            </div>
+                <label for="email" name="email" id="email" class="label-form">Email</label>
+                <input type="text" name="email" id="email" class="form-control" value= "" required />
+            </div>
+            
+            <div class="form-group">
+                <label for="telefone" name="telefone" id="telefone" class="label-form">Telefone</label>
+                <input type="text" name="telefone" id="telefone" class="form-control" value= "" required />
+            </div>
+            <div class="form-group">
+                <label for="senha" name="senha" id="senha" class="label-form">Senha</label>
+                <input type="text" name="senha" id="senha" class="form-control" value= "" required />
+            </div>
+            
+            
+
+        </div>
+
+
+        <div class="card-footer">
+            <div class="btn-group">
+                <a href ="{{ route('usuarios') }}" type="submit" class="btn btn-info">Inicio</a>
+                <button type="submit" class="btn btn-warning">Incluir</button>
+                <button type="reset" class="btn btn-primary">Limpar</button>
+            </div>
+
+        </div>
+
+    </form>
+@endsection
+
+
+form usuario
+
+@extends('layouts.app')
+
+@section('content')
+    <form class = "card" action="{{ route('atualizarUser') }}" method= "POST">
+
+
+        @method('PUT')
+        @csrf
+
+
+        <div class="card-header">
+            <div class="card-title">
+                Editando Usuário
+                <div class="card-body">
+
+                    <a href="{{ route('novoUser') }}" class="btn btn-primary">Cadastrar Usuário</a>
+
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+            <div class="form-group">
+                <label for="id" class="label-form">ID</label>
+                <input type="number" name="id" class="form-control" value="{{ $usuariosrh->id }}" readonly />
+            </div>
+
+            <div class="form-group">
+                <label for="nome" class="label-form">Nome</label>
+                <input type="text" name="nome" id="nome" class="form-control"
+                    value="{{ $usuariosrh->nome }}" />
+            </div>
+
+            <div class="form-group">
+                <label for="cpf" class="label-form">CPF</label>
+                <input type="text" name="cpf" id="cpf" class="form-control"
+                    value="{{ $usuariosrh->cpf }}" />
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="label-form">Email</label>
+                <input type="text" name="email" id="email" class="form-control"
+                    value="{{ $usuariosrh->email }}" />
+            </div>
+
+            <div class="form-group">
+                <label for="dataNascimento" class="label-form">Data de Nascimento</label>
+                <input type="text" name="dataNascimento" id="dataNascimento" class="form-control"
+                    value="{{ $usuariosrh->dataNascimento }}" />
+            </div>
+
+            <div class="form-group">
+                <label for="telefone" class="label-form">Telefone</label>
+                <input type="text" name="telefone" id="telefone" class="form-control"
+                    value="{{ $usuariosrh->telefone }}" />
+            </div>
+
+            <div class="form-group">
+                <label for="senha" class="label-form">Senha</label>
+                <input type="text" name="senha" id="senha" class="form-control"
+                    value="{{ $usuariosrh->senha }}" />
+            </div>
+
+
+        </div>
+
+        <div class="card-footer">
+            <div class="btn-group">
+                <a href ="{{ route('usuarios') }}" type="submit" class="btn btn-info">Inicio</a>
+                <button type="submit" class="btn btn-warning">Atualizar</button>
+                <button type="reset" class="btn btn-primary">Limpar</button>
+            </div>
+        </div>
+
+    </form>
+@endsection
+
+
+
+
+usuario
+
+@extends('layouts.app')
+@section('content')
+<table class="table table-hover table-striped">
+    <thead>
+
+        <tr>
+            <td>ID</td>
+            <td>Nome:</td>
+            <td>CPF:</td>
+            <td>Criado:</td>
+            <td>Atualizado:</td>
+            <td>Ações:</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($usuariosrh as $usuarios)
+            <tr>
+                <td>{{ $usuarios->id }}</td>
+                <td>{{ $usuarios->nome }}</td>
+                <td>{{ $usuarios->cpf }}</td>
+                <td>{{ $usuarios->created_at }}</td>
+                <td>{{ $usuarios->updated_at }}</td>
+                <td class="d-grid gap-2 d-md-flex"><a
+                        href="{{ route('editarUser', ['id' => $usuarios->id]) }}" class="btn btn-info btn-sm">Editar</a>
+
+                    <a href="{{ route('excluirUser', ['id' => $usuarios->id]) }}"
+                        class="btn btn-danger btn-sm">Excluir</a>
+
+
+                </td>
+            </tr>
+        @endforeach
+    </tbody>
+    <tfoot>
+        <tr>
+            <th colspan="7">
+
+                Numero de registros: {{ \App\Models\Usuariosrh::count() }}
+
+                <div>
+                    <a href="{{ route('novoUser') }}" class=" btn btn-primary me-md-2 btn-sm">Cadastrar Novo Usuário</a>
+
+                </div>
+            </th>
+        </tr>
+    </tfoot>
+</table>
+@endsection
+
+
+
+web php
+
+
+Route::get('usuarios', [\App\Http\Controllers\UsuariosController::class, 'index'])->name('usuarios');
+Route::get('editar/{id}/atualizar_usuario', [\App\Http\Controllers\UsuariosController::class, 'edit'])->name('editarUser');
+Route::put('/usuario', [\App\Http\Controllers\UsuariosController::class, 'update'])->name('atualizarUser');
+Route::get('/usuario/novo', [\App\Http\Controllers\UsuariosController::class, 'create'])->name('novoUser');
+Route::put('/usuario/incluir', [\App\Http\Controllers\UsuariosController::class, 'store'])->name('incluirUser');
+Route::get('/usuario/{id}/excluir', [\App\Http\Controllers\UsuariosController::class, 'destroy'])->name('excluirUser');
